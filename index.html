@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VLC Remote</title>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  </head>
+  <body>
+    <h2>VLC Controller</h2>
+
+    <button onclick="vlcAPI.play()">▶️ Play</button>
+    <button onclick="vlcAPI.pause()">⏸️ Pause</button>
+    <button onclick="vlcAPI.stop()">⏹️ Stop</button>
+    <button onclick="vlcAPI.seekForward()">⏩ Seek +10s</button>
+    <button onclick="vlcAPI.seekBackward()">⏪ Seek -10s</button>
+    <button onclick="vlcAPI.sync()">🔁 Sync to Me</button>
+    <script src="renderer.js"></script>
+  </body>
+</html>
