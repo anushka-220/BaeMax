@@ -22,7 +22,7 @@ VLC Sync Remote is a lightweight desktop application that allows two users to co
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/vlc-sync-app.git
+git clone https://github.com/anushka-220/vlc-sync-app.git
 cd vlc-sync-app
 ```
 
