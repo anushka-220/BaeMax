@@ -178,127 +178,250 @@
 
 
 
+// const socket = io('https://vlc-sync-server.onrender.com');
+// const player = document.getElementById('player');
+
+// // Video file loader
+// const videoInput = document.getElementById('videoInput');
+// videoInput.addEventListener('change', () => {
+//   const file = videoInput.files[0];
+//   if (file) {
+//     player.src = URL.createObjectURL(file);
+//     videoInput.classList.add('hidden'); // hide file chooser after selection
+//     addMessage(`Loaded video: ${file.name}`);
+//   }
+// });
+
+// // Chat handling
+// function addMessage(msg) {
+//   const div = document.createElement('div');
+//   div.textContent = msg;
+//   document.getElementById('messages').appendChild(div);
+//   div.scrollIntoView();
+// }
+// function sendMessage() {
+//   const input = document.getElementById('chatInput');
+//   const message = input.value.trim();
+//   if (!message) return;
+//   socket.emit('chat-message', { message });
+//   addMessage(`You: ${message}`);
+//   input.value = '';
+// }
+// socket.on('chat-message', (data) => addMessage(`Friend: ${data.message}`));
+// window.sendMessage = sendMessage;
+
+// // Sync & seek commands
+// function emitCommand(command, payload={}) {
+//   socket.emit('vlc-command', { command, ...payload });
+// }
+// function syncToMe() {
+//   emitCommand('sync', { time: player.currentTime });
+//   addMessage(`Syncing to my time (${Math.round(player.currentTime)}s)`);
+// }
+// function syncFromThem() {
+//   const time = prompt('Sync to what time (s)?');
+//   if (time) {
+//     player.currentTime = Number(time);
+//     emitCommand('sync', { time });
+//     addMessage(`Synced to ${time}s`);
+//   }
+// }
+// function seekForward() {
+//   player.currentTime += 10;
+//   emitCommand('seek', { direction: 'forward' });
+//   addMessage('Seek +10s');
+// }
+// function seekBackward() {
+//   player.currentTime -= 10;
+//   emitCommand('seek', { direction: 'backward' });
+//   addMessage('Seek -10s');
+// }
+// function playVideo() {
+//   player.play();
+//   emitCommand('play');
+//   addMessage('Play');
+// }
+// function pauseVideo() {
+//   player.pause();
+//   emitCommand('pause');
+//   addMessage('Pause');
+// }
+// function stopVideo() {
+//   player.pause();
+//   player.currentTime = 0;
+//   emitCommand('stop');
+//   addMessage('Stop');
+// }
+
+// // Expose them globally if you want to call them from HTML
+// window.playVideo = playVideo;
+// window.pauseVideo = pauseVideo;
+// window.stopVideo = stopVideo;
+
+// // 🔄 Listen for incoming play/pause/stop
+// socket.on('vlc-command', (data) => {
+//   switch(data.command) {
+//     case 'play':
+//       player.play();
+//       addMessage('Remote play');
+//       break;
+//     case 'pause':
+//       player.pause();
+//       addMessage('Remote pause');
+//       break;
+//     case 'stop':
+//       player.pause();
+//       player.currentTime = 0;
+//       addMessage('Remote stop');
+//       break;
+//     case 'sync':
+//       player.currentTime = Number(data.time);
+//       addMessage(`Remote synced to ${data.time}s`);
+//       break;
+//     case 'seek':
+//       player.currentTime += data.direction === 'forward' ? 10 : -10;
+//       addMessage(`Remote seek ${data.direction}`);
+//       break;
+//   }
+// });
+// window.syncToMe = syncToMe;
+// window.syncFromThem = syncFromThem;
+// window.seekForward = seekForward;
+// window.seekBackward = seekBackward;
+
+// // Handle incoming commands
+// socket.on('vlc-command', (data) => {
+//   switch (data.command) {
+//     case 'sync':
+//       player.currentTime = Number(data.time);
+//       addMessage(`Remote synced to ${data.time}s`);
+//       break;
+//     case 'seek':
+//       player.currentTime += data.direction === 'forward' ? 10 : -10;
+//       addMessage(`Remote seek ${data.direction}`);
+//       break;
+//   }
+// });
+
+
 const socket = io('https://vlc-sync-server.onrender.com');
 const player = document.getElementById('player');
+const messages = document.getElementById('messages');
+const actionLogs = document.getElementById('actionLogs');
 
-// Video file loader
-const videoInput = document.getElementById('videoInput');
-videoInput.addEventListener('change', () => {
-  const file = videoInput.files[0];
+// File picker
+document.getElementById('videoInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
   if (file) {
     player.src = URL.createObjectURL(file);
-    videoInput.classList.add('hidden'); // hide file chooser after selection
-    addMessage(`Loaded video: ${file.name}`);
   }
 });
 
-// Chat handling
-function addMessage(msg) {
+// Chat
+function addMessage(msg, mine = false) {
   const div = document.createElement('div');
+  div.classList.add('message-bubble');
+  if (mine) div.classList.add('mine');
   div.textContent = msg;
-  document.getElementById('messages').appendChild(div);
-  div.scrollIntoView();
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
 }
-function sendMessage() {
-  const input = document.getElementById('chatInput');
-  const message = input.value.trim();
-  if (!message) return;
-  socket.emit('chat-message', { message });
-  addMessage(`You: ${message}`);
-  input.value = '';
-}
-socket.on('chat-message', (data) => addMessage(`Friend: ${data.message}`));
-window.sendMessage = sendMessage;
 
-// Sync & seek commands
-function emitCommand(command, payload={}) {
+// Action log display
+function showLog(text) {
+  actionLogs.textContent = text;
+  actionLogs.classList.add('visible');
+  setTimeout(() => actionLogs.classList.remove('visible'), 2000); // hide after 2s
+}
+
+// Send chat message
+function sendMessage() {
+  const msgInput = document.getElementById('chatInput');
+  const message = msgInput.value.trim();
+  if (!message) return;
+  addMessage(`You: ${message}`, true);
+  socket.emit('chat-message', { message });
+  msgInput.value = '';
+}
+
+// Send message on Enter key
+document.getElementById('chatInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    sendMessage();
+  }
+});
+
+// Receive chat message
+socket.on('chat-message', data => addMessage(`Friend: ${data.message}`));
+
+// VLC commands emit helper
+function emitCommand(command, payload = {}) {
   socket.emit('vlc-command', { command, ...payload });
+}
+
+// Player controls
+function playVideo() {
+  player.play();
+  emitCommand('play');
+  showLog('Play');
+}
+function pauseVideo() {
+  player.pause();
+  emitCommand('pause');
+  showLog('Pause');
+}
+function stopVideo() {
+  player.pause();
+  player.currentTime = 0;
+  emitCommand('stop');
+  showLog('Stop');
 }
 function syncToMe() {
   emitCommand('sync', { time: player.currentTime });
-  addMessage(`Syncing to my time (${Math.round(player.currentTime)}s)`);
+  showLog(`Syncing to me (${Math.floor(player.currentTime)}s)`);
 }
 function syncFromThem() {
   const time = prompt('Sync to what time (s)?');
   if (time) {
     player.currentTime = Number(time);
     emitCommand('sync', { time });
-    addMessage(`Synced to ${time}s`);
+    showLog(`Syncing to ${time}s`);
   }
 }
 function seekForward() {
   player.currentTime += 10;
   emitCommand('seek', { direction: 'forward' });
-  addMessage('Seek +10s');
+  showLog('Seek +10s');
 }
 function seekBackward() {
   player.currentTime -= 10;
   emitCommand('seek', { direction: 'backward' });
-  addMessage('Seek -10s');
-}
-function playVideo() {
-  player.play();
-  emitCommand('play');
-  addMessage('Play');
-}
-function pauseVideo() {
-  player.pause();
-  emitCommand('pause');
-  addMessage('Pause');
-}
-function stopVideo() {
-  player.pause();
-  player.currentTime = 0;
-  emitCommand('stop');
-  addMessage('Stop');
+  showLog('Seek -10s');
 }
 
-// Expose them globally if you want to call them from HTML
-window.playVideo = playVideo;
-window.pauseVideo = pauseVideo;
-window.stopVideo = stopVideo;
-
-// 🔄 Listen for incoming play/pause/stop
-socket.on('vlc-command', (data) => {
-  switch(data.command) {
+// Listen to remote commands
+socket.on('vlc-command', data => {
+  switch (data.command) {
     case 'play':
       player.play();
-      addMessage('Remote play');
+      showLog('Remote Play');
       break;
     case 'pause':
       player.pause();
-      addMessage('Remote pause');
+      showLog('Remote Pause');
       break;
     case 'stop':
       player.pause();
       player.currentTime = 0;
-      addMessage('Remote stop');
+      showLog('Remote Stop');
       break;
     case 'sync':
       player.currentTime = Number(data.time);
-      addMessage(`Remote synced to ${data.time}s`);
+      showLog(`Remote Sync to ${data.time}s`);
       break;
     case 'seek':
       player.currentTime += data.direction === 'forward' ? 10 : -10;
-      addMessage(`Remote seek ${data.direction}`);
-      break;
-  }
-});
-window.syncToMe = syncToMe;
-window.syncFromThem = syncFromThem;
-window.seekForward = seekForward;
-window.seekBackward = seekBackward;
-
-// Handle incoming commands
-socket.on('vlc-command', (data) => {
-  switch (data.command) {
-    case 'sync':
-      player.currentTime = Number(data.time);
-      addMessage(`Remote synced to ${data.time}s`);
-      break;
-    case 'seek':
-      player.currentTime += data.direction === 'forward' ? 10 : -10;
-      addMessage(`Remote seek ${data.direction}`);
+      showLog(`Remote Seek ${data.direction}`);
       break;
   }
 });

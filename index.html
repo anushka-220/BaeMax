@@ -166,85 +166,155 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>VLC Remote</title>
+  <title>VLC Sync App</title>
   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
     body {
-      background-color: #000;
-      color: #ff8800;
-      font-family: Arial, sans-serif;
-      padding: 10px;
+      background: #000;
+      color: #fff;
       margin: 0;
-    }
-
-    .container {
+      font-family: Arial, sans-serif;
       display: flex;
       height: 100vh;
-      overflow: hidden;
     }
 
     video {
+      flex: 4;
       width: 80%;
+      background: #000;
       height: 100%;
-      background: #222;
     }
 
     .sidebar {
-      width: 20%;
-      padding: 10px;
-      background: #111;
-      border-left: 1px solid #ff8800;
+      flex: 1;
+      padding: 15px;
+      background: #222;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      justify-content: space-between;
+      box-sizing: border-box;
+      border-left: 1px solid #333;
+      position: relative;
     }
 
+    /* Chat bubbles */
     #messages {
       flex: 1;
       overflow-y: auto;
-      border: 1px solid #ff8800;
-      padding: 5px;
-      background: #000;
+      padding: 10px;
     }
 
-    input, button {
-      background: #222;
-      border: 1px solid #ff8800;
+    .message-bubble {
+      background: #333;
+      padding: 8px 12px;
+      border-radius: 16px;
+      margin-bottom: 8px;
+      color: #eee;
+      max-width: 70%;
+      word-break: break-word;
+    }
+
+    .message-bubble.mine {
+      background: #ff8800;
+      color: #000;
+      margin-left: auto;
+    }
+
+    /* Action log box */
+    #actionLogs {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.7);
+      padding: 10px 20px;
+      border-radius: 8px;
       color: #ff8800;
-      padding: 8px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+      font-size: 1.1em;
+      z-index: 10;
     }
 
-    .hidden {
-      display: none;
+    #actionLogs.visible {
+      opacity: 1;
+    }
+
+    /* Input and buttons */
+    .input-row {
+      display: flex;
+      gap: 8px;
+      padding-top: 10px;
+    }
+
+    #chatInput {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      border: none;
+      background: #333;
+      color: #eee;
+    }
+
+    .control-panel {
+      padding: 10px 0;
+      border-top: 1px solid #444;
+      margin-top: 10px;
+    }
+
+    .control-panel button {
+      background: #ff8800;
+      border: none;
+      padding: 8px;
+      border-radius: 6px;
+      margin: 4px;
+      cursor: pointer;
+      color: #000;
+    }
+
+    .control-panel button:hover {
+      background: #ff9900;
+    }
+
+    input[type="file"] {
+      padding: 5px;
+      border: none;
+      background: #333;
+      color: #eee;
+      border-radius: 8px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <video id="player" controls></video>
-    <div class="sidebar">
-  <input id="videoInput" type="file" accept="video/*" />
 
-  <div id="messages"></div>
+  <video id="player" controls></video>
 
-  <div style="display: flex;">
-    <input id="chatInput" placeholder="Your message" style="flex:1;" />
-    <button onclick="sendMessage()">Send</button>
+  <div class="sidebar">
+    <input id="videoInput" type="file" accept="video/*" />
+
+    <div id="messages"></div>
+
+    <div id="actionLogs"></div>
+
+    <div class="input-row">
+      <input id="chatInput" placeholder="Type a message and hit Enter..." />
+      <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <div class="control-panel">
+      <button onclick="playVideo()">▶️</button>
+      <button onclick="pauseVideo()">⏸️</button>
+      <button onclick="stopVideo()">⏹️</button>
+      <button onclick="syncToMe()">Sync to Me</button>
+      <button onclick="syncFromThem()">Sync from Them</button>
+      <button onclick="seekBackward()">⏪ -10s</button>
+      <button onclick="seekForward()">⏩ +10s</button>
+    </div>
   </div>
 
-  <!-- 🎮 Playback Controls -->
-  <button onclick="playVideo()">▶️ Play</button>
-  <button onclick="pauseVideo()">⏸️ Pause</button>
-  <button onclick="stopVideo()">⏹️ Stop</button>
-
-  <!-- Sync & Seek Controls -->
-  <button onclick="syncToMe()">Sync to me</button>
-  <button onclick="syncFromThem()">Sync from them</button>
-  <button onclick="seekBackward()">⏪ -10s</button>
-  <button onclick="seekForward()">⏩ +10s</button>
-</div>
-  </div>
   <script src="renderer.js"></script>
 </body>
 </html>
