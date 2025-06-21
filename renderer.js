@@ -309,21 +309,68 @@ const player = document.getElementById('player');
 const messages = document.getElementById('messages');
 const actionLogs = document.getElementById('actionLogs');
 
+// Helper to generate a consistent color based on a string (e.g., user ID)
+function stringToHslColor(str, s, l) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    const h = hash % 360;
+    return 'hsl(' + h + ', ' + s + '%, ' + l + '%)';
+}
+
 // File picker
 document.getElementById('videoInput').addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (file) {
     player.src = URL.createObjectURL(file);
+    showLog(`Loaded: ${file.name}`);
   }
 });
 
 // Chat
-function addMessage(msg, mine = false) {
+// This function now accepts 'userId' and 'isMine' to differentiate messages
+function addMessage(msg, userId, isMine = false) {
+  const messageContainer = document.createElement('div');
+  messageContainer.classList.add('message-container');
+  if (isMine) {
+    messageContainer.classList.add('mine');
+  }
+
+  // Create user circle
+  const userCircle = document.createElement('div');
+  userCircle.classList.add('user-circle');
+
+  let initial = 'F'; // Default for friend
+  let color = stringToHslColor('friend-default', 70, 40); // Default color for friends
+
+  if (isMine) {
+    initial = 'Y'; // You
+    // Use the actual socket ID for your own color to make it unique across sessions
+    color = stringToHslColor(socket.id, 85, 55); // Brighter and more saturated for "You"
+  } else if (userId) {
+    // If a userId is provided by the server, use it to generate the color
+    initial = userId.substring(0, 1).toUpperCase();
+    color = stringToHslColor(userId, 70, 40);
+  }
+
+  userCircle.style.backgroundColor = color;
+  userCircle.textContent = initial;
+
+  // Create message bubble
   const div = document.createElement('div');
   div.classList.add('message-bubble');
-  if (mine) div.classList.add('mine');
   div.textContent = msg;
-  messages.appendChild(div);
+
+  if (isMine) {
+    messageContainer.appendChild(div);
+    messageContainer.appendChild(userCircle);
+  } else {
+    messageContainer.appendChild(userCircle);
+    messageContainer.appendChild(div);
+  }
+
+  messages.appendChild(messageContainer);
   messages.scrollTop = messages.scrollHeight;
 }
 
@@ -331,6 +378,7 @@ function addMessage(msg, mine = false) {
 function showLog(text) {
   actionLogs.textContent = text;
   actionLogs.classList.add('visible');
+  // Add a slight animation for the pop-up
   setTimeout(() => actionLogs.classList.remove('visible'), 2000); // hide after 2s
 }
 
@@ -339,7 +387,8 @@ function sendMessage() {
   const msgInput = document.getElementById('chatInput');
   const message = msgInput.value.trim();
   if (!message) return;
-  addMessage(`You: ${message}`, true);
+  // When sending, use your own socket.id (or a consistent identifier) for your message
+  addMessage(message, socket.id, true);
   socket.emit('chat-message', { message });
   msgInput.value = '';
 }
@@ -352,7 +401,13 @@ document.getElementById('chatInput').addEventListener('keydown', (e) => {
 });
 
 // Receive chat message
-socket.on('chat-message', data => addMessage(`Friend: ${data.message}`));
+socket.on('chat-message', data => {
+    // The server currently doesn't send the sender's ID.
+    // For a real multi-user app, 'data' would ideally contain 'senderId'
+    // For now, we'll just show a generic "Friend" message.
+    addMessage(`${data.message}`, 'some-other-user-id', false); // Placeholder user ID for friends
+});
+
 
 // VLC commands emit helper
 function emitCommand(command, payload = {}) {
@@ -363,65 +418,106 @@ function emitCommand(command, payload = {}) {
 function playVideo() {
   player.play();
   emitCommand('play');
-  showLog('Play');
+  showLog('Play Video');
 }
 function pauseVideo() {
   player.pause();
   emitCommand('pause');
-  showLog('Pause');
+  showLog('Pause Video');
 }
 function stopVideo() {
   player.pause();
   player.currentTime = 0;
   emitCommand('stop');
-  showLog('Stop');
+  showLog('Stop Video');
 }
 function syncToMe() {
   emitCommand('sync', { time: player.currentTime });
-  showLog(`Syncing to me (${Math.floor(player.currentTime)}s)`);
+  showLog(`Syncing to my time (${Math.floor(player.currentTime)}s)`);
 }
 function syncFromThem() {
-  const time = prompt('Sync to what time (s)?');
-  if (time) {
-    player.currentTime = Number(time);
+  const timeStr = prompt('Sync to what time (seconds)?');
+  if (timeStr === null || timeStr.trim() === '') {
+      return; // User cancelled or entered empty
+  }
+  const time = Number(timeStr);
+  if (!isNaN(time) && time >= 0) {
+    player.currentTime = time;
     emitCommand('sync', { time });
-    showLog(`Syncing to ${time}s`);
+    showLog(`Syncing to ${Math.floor(time)}s`);
+  } else {
+    showLog('Invalid time entered!');
   }
 }
 function seekForward() {
   player.currentTime += 10;
   emitCommand('seek', { direction: 'forward' });
-  showLog('Seek +10s');
+  showLog('Seek Forward (+10s)');
 }
 function seekBackward() {
   player.currentTime -= 10;
   emitCommand('seek', { direction: 'backward' });
-  showLog('Seek -10s');
+  showLog('Seek Backward (-10s)');
+}
+// Chat functions — make sure this matches your client HTML
+function addMessage(msg, isMine = false) {
+  const div = document.createElement('div');
+  div.classList.add('message');
+  if (isMine) div.classList.add('mine'); // align to right
+  div.textContent = msg;
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
 }
 
+// Send message handler
+function sendMessage() {
+  const chatInput = document.getElementById('chatInput');
+  const text = chatInput.value.trim();
+  if (!text) return;
+  addMessage(`You: ${text}`, true);      // show your message locally
+  socket.emit('chat-message', { message: text }); // emit to server
+  chatInput.value = '';
+}
+
+// Listen for incoming chat messages
+socket.on('chat-message', (data) => {
+  addMessage(`Friend: ${data.message}`); // show remote user’s message
+});
+
+// Allow Enter key to send
+document.getElementById('chatInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendMessage();
+});
+
+// Expose the sendMessage to the global scope so the `onclick` works
+window.sendMessage = sendMessage;
 // Listen to remote commands
 socket.on('vlc-command', data => {
   switch (data.command) {
     case 'play':
       player.play();
-      showLog('Remote Play');
+      showLog('Remote Play Received');
       break;
     case 'pause':
       player.pause();
-      showLog('Remote Pause');
+      showLog('Remote Pause Received');
       break;
     case 'stop':
       player.pause();
       player.currentTime = 0;
-      showLog('Remote Stop');
+      showLog('Remote Stop Received');
       break;
     case 'sync':
-      player.currentTime = Number(data.time);
-      showLog(`Remote Sync to ${data.time}s`);
+      const syncTime = Number(data.time);
+      if (!isNaN(syncTime) && syncTime >= 0) {
+        player.currentTime = syncTime;
+        showLog(`Remote Sync to ${Math.floor(syncTime)}s`);
+      }
       break;
     case 'seek':
-      player.currentTime += data.direction === 'forward' ? 10 : -10;
-      showLog(`Remote Seek ${data.direction}`);
+      const seekAmount = data.direction === 'forward' ? 10 : -10;
+      player.currentTime += seekAmount;
+      showLog(`Remote Seek ${data.direction === 'forward' ? '+' : ''}${seekAmount}s`);
       break;
   }
 });
