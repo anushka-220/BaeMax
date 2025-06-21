@@ -1,232 +1,121 @@
 <!-- <!DOCTYPE html>
 <html>
-  <head>
-    <title>VLC Remote</title>
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  </head>
-  <body>
-    <h2>VLC Controller</h2>
-
-    <button onclick="vlcAPI.play()">▶️ Play</button>
-    <button onclick="vlcAPI.pause()">⏸️ Pause</button>
-    <button onclick="vlcAPI.stop()">⏹️ Stop</button>
-    <button onclick="vlcAPI.seekForward()">⏩ Seek +10s</button>
-    <button onclick="vlcAPI.seekBackward()">⏪ Seek -10s</button>
-    <button onclick="vlcAPI.sync()">🔁 Sync to Me</button>
-    <script src="renderer.js"></script>
-    <div class="chat-container" style="margin-top: 20px; width: 100%; max-width: 480px;">
-  <h3 style="text-align:center;">Chat</h3>
-  <div id="messages" style="height: 200px; overflow-y: auto; background:#fafafa; padding:10px; border:1px solid #ccc; border-radius: 8px;"></div>
-  <input id="chatInput" placeholder="Type a message..." style="width: calc(100% - 100px); padding:8px;" />
-  <button onclick="sendMessage()" style="width:80px; padding:8px;">Send</button>
-</div>
-  </body>
-</html> -->
-
-<!-- <!DOCTYPE html>
-<html>
 <head>
-  <title>VLC Remote</title>
+  <title>BaeMax</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #000;
-      color: #ff8800;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    h2 {
-      font-size: 2rem;
-      margin-bottom: 20px;
-      color: #ff8800;
-      text-shadow: 0 0 5px #ff8800;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 30px;
-    }
-
-    button {
-      background: #ff8800;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
-      color: #000;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: all 0.2s ease;
-      box-shadow: 0 0 10px rgba(255, 136, 0, 0.3);
-    }
-
-    button:hover {
-      background: #ff9900;
-      box-shadow: 0 0 15px rgba(255, 136, 0, 0.6);
-    }
-
-    button:active {
-      background: #cc6e00;
-    }
-
-    .chat-container {
-      background: #111;
-      padding: 20px;
-      border: 1px solid #ff8800;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 480px;
-      box-shadow: 0 0 15px rgba(255, 136, 0, 0.2);
-    }
-
-    .chat-container h3 {
-      color: #ff8800;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-
-    #messages {
-      height: 200px;
-      overflow-y: auto;
-      background: #000;
-      padding: 10px;
-      border: 1px solid #ff8800;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      color: #ffcc88;
-      font-size: 0.95rem;
-    }
-
-    #chatInput {
-      width: calc(100% - 100px);
-      padding: 10px;
-      border: 1px solid #ff8800;
-      background: #222;
-      color: #ffcc88;
-      border-radius: 6px;
-      margin-right: 10px;
-    }
-
-    #chatInput::placeholder {
-      color: #aa6600;
-    }
-
-    .chat-container button {
-      padding: 10px 16px;
-      background: #ff8800;
-      border: none;
-      border-radius: 6px;
-      color: #000;
-      cursor: pointer;
-    }
-
-    .chat-container button:hover {
-      background: #ff9900;
-    }
-  </style>
-</head>
-<body>
-  <h2>VLC Controller</h2>
-
-  <div class="controls">
-    <button onclick="vlcAPI.play()">▶️ Play</button>
-    <button onclick="vlcAPI.pause()">⏸️ Pause</button>
-    <button onclick="vlcAPI.stop()">⏹️ Stop</button>
-    <button onclick="vlcAPI.seekForward()">⏩ +10s</button>
-    <button onclick="vlcAPI.seekBackward()">⏪ -10s</button>
-    <button onclick="vlcAPI.sync()">🔁 Sync to Me</button>
-    <button onclick="vlcAPI.syncFromThem()">🔄 Sync to Them</button>
-    <button onclick="vlcAPI.fullscreen()">⛶ Toggle VLC Fullscreen</button>
-    <button onclick="appAPI.resizeVLC()">Resize VLC</button>
-  </div>
-
-  <div class="chat-container">
-    <h3>Chat</h3>
-    <div id="messages"></div>
-    <div style="display: flex; align-items: center; justify-content: center;">
-      <input id="chatInput" placeholder="Type a message..." />
-      <button onclick="sendMessage()">Send</button>
-    </div>
-  </div>
-
-  <script src="renderer.js"></script>
-</body>
-</html>
-
-
- -->
-
-<html>
-<head>
-  <title>VLC Sync App</title>
-  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <style>
-    /* Inter font for a modern look */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
-    body {
-      background: #1a0033; /* Deep Purple */
-      color: #e0e0e0; /* Light grey text */
+      background: #1a0033;
+      color: #e0e0e0;
       margin: 0;
       font-family: 'Inter', Arial, sans-serif;
       display: flex;
       height: 100vh;
-      overflow: hidden; /* Prevent body scroll */
+      overflow: hidden;
     }
-
-    video {
+    .video-player-container {
       flex: 4;
-      width: 80%;
+      position: relative;
       background: #000;
-      height: 100%;
-      border-radius: 8px; /* Rounded corners for video player */
-      object-fit: contain; /* Ensure video scales properly */
+      border-radius: 8px;
+      overflow: hidden;
     }
-
-    .sidebar {
-      flex: 1;
-      min-width: 300px; /* Ensure sidebar has minimum width */
-      padding: 15px;
-      background: #000000; /* Black for sidebar */
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .video-controls-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 40%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      box-sizing: border-box;
-      border-left: 1px solid #330066; /* Darker purple border */
-      position: relative;
+      justify-content: flex-end;
     }
-
-    /* Chat bubbles */
+    .video-player-container:hover .video-controls-overlay,
+    .video-controls-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #progressBar {
+      width: 100%;
+      appearance: none;
+      background: rgba(255,255,255,0.2);
+      height: 5px;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+    #progressBar::-webkit-slider-thumb {
+      appearance: none;
+      background: #ff8800;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+    .bottom-player-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(0,0,0,0.6);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+    .control-button-player {
+      background: transparent;
+      border: none;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #fff;
+      transition: background 0.2s;
+    }
+    .control-button-player:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .sidebar {
+      flex: 1;
+      min-width: 300px;
+      padding: 15px;
+      background: #000;
+      border-left: 1px solid #330066;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-sizing: border-box;
+    }
     #messages {
       flex: 1;
       overflow-y: auto;
       padding: 10px;
-      margin-bottom: 10px;
-      -webkit-overflow-scrolling: touch; /* Smoother scrolling on iOS */
     }
-
+    .message-bubble {
+      background: rgba(80,80,80,0.7);
+      padding: 8px 12px;
+      border-radius: 18px;
+      color: #eee;
+      max-width: 75%;
+      word-break: break-word;
+      line-height: 1.4;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
     .message-container {
       display: flex;
-      align-items: flex-start; /* Align message bubble with user circle */
+      align-items: flex-start;
       margin-bottom: 8px;
     }
-
-    .message-container.mine {
-      justify-content: flex-end; /* Align user's messages to the right */
-    }
-
     .user-circle {
-      width: 30px;
-      height: 30px;
+      width: 30px; height: 30px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -235,138 +124,131 @@
       font-weight: bold;
       color: #fff;
       margin-right: 8px;
-      flex-shrink: 0; /* Prevent shrinking */
+      flex-shrink: 0;
     }
-
-    .message-container.mine .user-circle {
-      margin-left: 8px; /* Margin on the left for user's own messages */
-      margin-right: 0;
-    }
-
-    .message-bubble {
-      background: rgba(51, 51, 51, 0.7); /* Grey-transparent */
-      padding: 8px 12px;
-      border-radius: 18px; /* More rounded */
-      color: #eee;
-      max-width: 75%; /* Slightly larger max-width */
-      word-break: break-word;
-      line-height: 1.4;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    }
-
-    .message-container.mine .message-bubble {
-      background: rgba(255, 136, 0, 0.7); /* Orange-transparent for mine */
-      color: #000;
-      text-shadow: 0 0 2px rgba(255, 255, 255, 0.2); /* Subtle text shadow for contrast */
-    }
-
-    /* Action log box */
+    .message-container.mine { justify-content: flex-end; }
+    .message-container.mine .message-bubble { background: rgba(80,80,80,0.7); }
+    .message-container:not(.mine) { justify-content: flex-start; }
     #actionLogs {
       position: absolute;
-      top: 50%;
-      left: 50%;
+      top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(255, 136, 0, 0.8); /* Orange-transparent */
+      background: rgba(255,136,0,0.8);
       padding: 10px 20px;
       border-radius: 12px;
-      color: #000;
       opacity: 0;
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      transition: opacity 0.5s;
       pointer-events: none;
-      font-size: 1.2em;
       font-weight: 600;
-      z-index: 10;
-      text-align: center;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
-
-    #actionLogs.visible {
-      opacity: 1;
-      transform: translate(-50%, -50%) scale(1.05);
-    }
-
-    /* Input and buttons */
+    #actionLogs.visible { opacity: 1; }
     .input-row {
       display: flex;
       gap: 8px;
       padding-top: 10px;
-      border-top: 1px solid #330066; /* Dark purple separator */
+      border-top: 1px solid #330066;
       margin-top: 10px;
     }
-
+    .message-log {
+      text-align: center;
+      color: #ddd;
+      background: rgba(80,80,80,0.5);
+      border-radius: 12px;
+      padding: 6px 12px;
+      margin: 8px auto;
+      max-width: 80%;
+      font-size: 0.9em;
+    }
     #chatInput {
       flex: 1;
       padding: 10px;
       border-radius: 10px;
       border: 1px solid #330066;
-      background: #111; /* Darker input background */
+      background: #111;
       color: #eee;
       font-size: 0.95em;
-      outline: none;
-      transition: border-color 0.3s ease;
     }
-
-    #chatInput:focus {
-      border-color: #ff8800; /* Orange focus glow */
-    }
-
-    .send-button {
-      background: linear-gradient(145deg, #ff8800, #cc6600); /* Orange gradient */
+    .send-button, .emoji-button {
+      background: linear-gradient(145deg, #ff8800, #cc6600);
       border: none;
       padding: 8px 15px;
       border-radius: 10px;
       cursor: pointer;
       color: #000;
       font-weight: 600;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
-    .send-button:hover {
+    .send-button:hover, .emoji-button:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
     }
-
-    .send-button:active {
+    .send-button:active, .emoji-button:active {
       transform: translateY(0);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-
+    .emoji-picker-container {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      right: 0;
+      width: 280px;
+      max-height: 250px;
+      overflow-y: auto;
+      background: #222;
+      border: 1px solid #330066;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+      z-index: 100;
+      padding: 10px;
+      display: none;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      gap: 5px;
+    }
+    .emoji-picker-container.visible { display: flex; }
+    .emoji-picker-container span {
+      cursor: pointer;
+      font-size: 1.8em;
+      padding: 5px;
+      border-radius: 5px;
+      transition: background-color 0.2s;
+    }
+    .emoji-picker-container span:hover { background-color: #333; }
     .control-panel {
       padding: 10px 0;
       border-top: 1px solid #330066;
       margin-top: 10px;
       display: flex;
-      flex-wrap: wrap; /* Allow buttons to wrap */
-      justify-content: center; /* Center buttons */
-      gap: 8px; /* Spacing between buttons */
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
     }
-
     .control-panel button {
-      background: linear-gradient(145deg, #6a008a, #4a005c); /* Deep purple gradient */
-      border: 1px solid #9900cc; /* Lighter purple border */
+      background: linear-gradient(145deg, #6a008a, #4a005c);
+      border: 1px solid #9900cc;
       padding: 10px 15px;
       border-radius: 8px;
       cursor: pointer;
       color: #fff;
       font-weight: 500;
       font-size: 1em;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
-      min-width: 80px; /* Ensure buttons have a minimum width */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+      min-width: 80px;
     }
-
     .control-panel button:hover {
-      background: linear-gradient(145deg, #7a009a, #5a006c); /* Slightly lighter on hover */
+      background: linear-gradient(145deg, #7a009a, #5a006c);
       transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
     }
-
     .control-panel button:active {
       transform: translateY(0);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
-
     input[type="file"] {
       padding: 8px;
       border: 1px solid #330066;
@@ -377,9 +259,8 @@
       font-size: 0.95em;
       cursor: pointer;
       width: 100%;
-      box-sizing: border-box; /* Include padding in width */
+      box-sizing: border-box;
     }
-
     input[type="file"]::-webkit-file-upload-button {
       background: linear-gradient(145deg, #ff8800, #cc6600);
       color: #000;
@@ -388,63 +269,639 @@
       border-radius: 6px;
       cursor: pointer;
       margin-right: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
-
-    /* Responsive adjustments */
+    #generatedRoomBox {
+  display: none;
+}
+#copyRoomButton {
+  background: #444;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#copyRoomButton:hover {
+  background: #555;
+}
+    .modal-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.modal-content {
+  background: #222;
+  padding: 20px;
+  border-radius: 10px;
+  color: #fff;
+  width: 300px;
+  text-align: center;
+}
+.modal-content input, .modal-content button {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+  border-radius: 6px;
+  border: none;
+}
     @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-        height: auto; /* Allow scrolling on smaller screens */
-      }
-
-      video {
-        width: 100%;
-        height: 50vh; /* Make video take less vertical space */
-        border-radius: 0; /* No rounded corners on top/bottom for full width */
-      }
-
-      .sidebar {
-        min-width: unset; /* Remove min-width for mobile */
-        width: 100%;
-        height: 50vh; /* Sidebar takes remaining space */
-        border-left: none;
-        border-top: 1px solid #330066;
-      }
-
-      .control-panel {
-        justify-content: space-around; /* Distribute buttons */
-      }
+      body { flex-direction: column; }
+      .sidebar { width: 100%; height: 50vh; }
     }
   </style>
 </head>
+Login Modal -->
+<!-- <div id="loginModal" class="modal-overlay">
+  <div class="modal-content">
+    <h2>Join or Create a Room</h2>
+<input id="usernameInput" placeholder="Your username..." />
+
+<hr /> -->
+
+<!-- Auto-generate room code -->
+<!-- <button id="createRoomButton">Create Random Room</button>
+<div id="generatedRoomBox" style="margin-top: 10px; display: none; align-items: center; gap: 8px;">
+  <span id="generatedRoomCode" style="font-weight: bold; padding: 6px 10px; background: #333; border-radius: 6px;"></span>
+  <button id="copyRoomButton" title="Copy code">📋</button>
+</div>
+
+<hr /> -->
+
+<!-- Join existing room -->
+<!-- <input id="joinRoomInput" placeholder="Room code to join..." />
+<button id="joinRoomButton">Join Room</button>
+  </div>
+</div>
 <body>
-
-  <video id="player" controls></video>
-
+  <div class="video-player-container">
+    <video id="player"></video>
+    <div class="video-controls-overlay">
+      <input id="progressBar" type="range" min="0" max="100" value="0" step="0.1" />
+      <div id="timeDisplay" style="color:#eee; padding:5px 10px; font-size:0.9em; text-align:right; width:100%; font-family:monospace;">
+        00:00 / 00:00 (-00:00)
+      </div>
+      <div class="bottom-player-bar">
+        <button id="customSeekBackward" class="control-button-player" title="Back 10s">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polyline points="11 19 2 12 11 5"></polyline>
+            <polyline points="22 19 13 12 22 5"></polyline>
+          </svg>
+        </button>
+        <button id="customPlayPause" class="control-button-player" title="Play/Pause">
+          <svg id="playIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <svg id="pauseIcon" style="display:none;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <rect x="5" y="4" width="4" height="16"></rect>
+            <rect x="15" y="4" width="4" height="16"></rect>
+          </svg>
+        </button>
+        <button id="customSeekForward" class="control-button-player" title="Forward 10s">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polyline points="13 5 22 12 13 19"></polyline>
+            <polyline points="2 5 11 12 2 19"></polyline>
+          </svg>
+        </button>
+        <button id="customSyncToMe" class="control-button-player" title="Sync to Me">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M21 12c0-5-4-9-9-9M3 12c0 5 4 9 9 9" />
+            <polyline points="12 1 12 5 16 1" />
+            <polyline points="12 23 12 19 8 23" />
+          </svg>
+        </button>
+        <button id="customSyncFromThem" class="control-button-player" title="Sync From Them">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polyline points="19 12 12 19 5 12"></polyline>
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
   <div class="sidebar">
     <input id="videoInput" type="file" accept="video/*" />
-
     <div id="messages"></div>
-
     <div id="actionLogs"></div>
-
     <div class="input-row">
       <input id="chatInput" placeholder="Type a message..." />
       <button class="send-button" onclick="sendMessage()">Send</button>
     </div>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html> -->
 
-    <div class="control-panel">
-      <button onclick="playVideo()">▶️ Play</button>
-      <button onclick="pauseVideo()">⏸️ Pause</button>
-      <button onclick="stopVideo()">⏹️ Stop</button>
-      <button onclick="syncToMe()">🔄 Sync to Me</button>
-      <button onclick="syncFromThem()">⬇️ Sync from Them</button>
-      <button onclick="seekBackward()">⏪ -10s</button>
-      <button onclick="seekForward()">⏩ +10s</button>
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BaeMax</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* Base styles for the overall app theme */
+    body {
+      background: #1a0033; /* Deep Purple */
+      color: #e0e0e0; /* Light grey text */
+      margin: 0;
+      font-family: 'Inter', Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      overflow: hidden; /* Prevent body scroll */
+    }
+
+    /* Video Player Container and Overlay Controls */
+    .video-player-container {
+      flex: 4;
+      position: relative;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .video-controls-overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      padding: 10px 20px;
+      box-sizing: border-box;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 40%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .video-player-container:hover .video-controls-overlay,
+    .video-controls-overlay.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    #progressBar {
+      width: 100%;
+      appearance: none;
+      background: rgba(255,255,255,0.2);
+      height: 5px;
+      border-radius: 3px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      outline: none; /* Remove default focus outline */
+    }
+    #progressBar::-webkit-slider-thumb {
+      appearance: none;
+      background: #ff8800; /* Orange thumb */
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      cursor: grab;
+      box-shadow: 0 0 5px rgba(255, 136, 0, 0.5);
+    }
+    #progressBar::-moz-range-thumb { /* For Firefox */
+      background: #ff8800;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      cursor: grab;
+      box-shadow: 0 0 5px rgba(255, 136, 0, 0.5);
+    }
+    .bottom-player-bar {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(0,0,0,0.6);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+    .control-button-player {
+      background: transparent;
+      border: none;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: #fff;
+      transition: background 0.2s;
+    }
+    .control-button-player:hover {
+      background: rgba(255,255,255,0.2);
+    }
+    .sidebar {
+      flex: 1;
+      min-width: 300px;
+      padding: 15px;
+      background: #000;
+      border-left: 1px solid #330066;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      box-sizing: border-box;
+    }
+    #messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    .message-bubble {
+      background: rgba(80,80,80,0.7);
+      padding: 8px 12px;
+      border-radius: 18px;
+      color: #eee;
+      max-width: 75%;
+      word-break: break-word;
+      line-height: 1.4;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    .message-container {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .user-circle {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8em;
+      font-weight: bold;
+      color: #fff;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+    .message-container.mine { justify-content: flex-end; }
+    .message-container.mine .message-bubble { background: rgba(80,80,80,0.7); }
+    .message-container:not(.mine) .user-circle { margin-left: 0; margin-right: 8px; }
+    .message-container:not(.mine) { justify-content: flex-start; }
+
+    #actionLogs {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(255,136,0,0.8);
+      padding: 10px 20px;
+      border-radius: 12px;
+      opacity: 0;
+      transition: opacity 0.5s;
+      pointer-events: none;
+      font-weight: 600;
+      color: #000; /* Ensure text color is black for contrast */
+      z-index: 10; /* Ensure it's above other elements */
+    }
+    #actionLogs.visible { opacity: 1; }
+    .input-row {
+      display: flex;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid #330066;
+      margin-top: 10px;
+      position: relative; /* Needed for positioning emoji picker */
+    }
+    .message-log {
+      text-align: center;
+      color: #ddd;
+      background: rgba(80,80,80,0.5);
+      border-radius: 12px;
+      padding: 6px 12px;
+      margin: 8px auto;
+      max-width: 80%;
+      font-size: 0.9em;
+    }
+    #chatInput {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid #330066;
+      background: #111;
+      color: #eee;
+      font-size: 0.95em;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    #chatInput:focus {
+      border-color: #ff8800;
+    }
+    .send-button { /* Removed .emoji-button from here */
+      background: linear-gradient(145deg, #ff8800, #cc6600);
+      border: none;
+      padding: 8px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #000;
+      font-weight: 600;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .send-button:hover { /* Removed .emoji-button from here */
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+    .send-button:active { /* Removed .emoji-button from here */
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    /* Removed .emoji-picker-container specific styles and related span styles */
+
+    .control-panel {
+      padding: 10px 0;
+      border-top: 1px solid #330066;
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+    .control-panel button {
+      background: linear-gradient(145deg, #6a008a, #4a005c);
+      border: 1px solid #9900cc;
+      padding: 10px 15px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #fff;
+      font-weight: 500;
+      font-size: 1em;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.3s;
+      min-width: 80px;
+    }
+    .control-panel button:hover {
+      background: linear-gradient(145deg, #7a009a, #5a006c);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    }
+    .control-panel button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    input[type="file"] {
+      padding: 8px;
+      border: 1px solid #330066;
+      background: #111;
+      color: #eee;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 0.95em;
+      cursor: pointer;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    input[type="file"]::-webkit-file-upload-button {
+      background: linear-gradient(145deg, #ff8800, #cc6600);
+      color: #000;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    /* --- Login Modal Styles --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.85); /* Slightly darker overlay */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      backdrop-filter: blur(5px); /* Subtle blur effect */
+    }
+    .modal-content {
+      /* Updated gradient for deep purple to violet spectrum */
+      background: linear-gradient(160deg, #1a0033, #8A2BE2); /* Deep Purple to Blue Violet */
+      padding: 40px; /* Increased padding */
+      border-radius: 15px; /* More rounded corners */
+      color: #fff;
+      width: 400px; /* Wider modal */
+      max-width: 90%; /* Responsive max width */
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.7); /* Stronger shadow */
+      border: 1px solid #5a006c; /* Subtle border */
+      animation: fadeInScale 0.3s ease-out forwards; /* Animation on load */
+    }
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .modal-content h2 {
+      font-size: 2.2em; /* Larger heading */
+      margin-bottom: 15px;
+      color: #ff8800; /* Orange highlight for title */
+      text-shadow: 0 0 5px rgba(255, 136, 0, 0.4);
+    }
+    .modal-tagline {
+      font-size: 1.1em;
+      color: #ccc;
+      margin-bottom: 30px; /* More space below taglines */
+      line-height: 1.5;
+    }
+    .modal-input {
+      width: calc(100% - 20px); /* Adjust for padding */
+      padding: 12px 10px; /* More padding */
+      margin: 10px 0;
+      border-radius: 8px; /* Rounded input fields */
+      border: 1px solid #555; /* Grey border */
+      background: #333; /* Darker input background */
+      color: #eee;
+      font-size: 1.1em;
+      outline: none;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .modal-input::placeholder {
+      color: #aaa;
+    }
+    .modal-input:focus {
+      border-color: #ff8800; /* Orange focus glow */
+      box-shadow: 0 0 8px rgba(255, 136, 0, 0.6);
+    }
+    .modal-divider {
+      border: none;
+      border-top: 1px solid #5a006c; /* Purple divider */
+      margin: 25px 0; /* More vertical space */
+    }
+    .modal-button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 600;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+      color: #fff; /* Default text color for buttons */
+    }
+    /* Specific button styles */
+    #createRoomButton {
+      background: linear-gradient(145deg, #007bff, #0056b3); /* Blue gradient for create */
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+    }
+    #createRoomButton:hover {
+      background: linear-gradient(145deg, #008cff, #0066cc);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 123, 255, 0.6);
+    }
+    #joinRoomButton {
+      background: linear-gradient(145deg, #28a745, #1e7e34); /* Green gradient for join */
+      box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);
+    }
+    #joinRoomButton:hover {
+      background: linear-gradient(145deg, #2ecc71, #27ae60);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(40, 167, 69, 0.6);
+    }
+    #generatedRoomBox {
+      display: flex; /* Keep flex for alignment */
+      align-items: center;
+      justify-content: center; /* Center content within the box */
+      gap: 10px; /* Space between code and button */
+      margin-top: 15px;
+      padding: 10px 15px;
+      background: #444; /* Darker grey background */
+      border-radius: 8px;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+      font-size: 1.1em;
+      color: #eee;
+    }
+    #generatedRoomCode {
+      font-weight: bold;
+      padding: 5px 10px;
+      background: #555; /* Slightly lighter background for the code itself */
+      border-radius: 5px;
+      font-family: 'monospace'; /* Monospace for code */
+      letter-spacing: 1px;
+    }
+    #copyRoomButton {
+      background: #007bff; /* Blue for copy button */
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+      font-size: 1.1em;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    #copyRoomButton:hover {
+      background: #0056b3;
+      transform: translateY(-1px);
+    }
+    #copyRoomButton:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .sidebar { width: 100%; height: 50vh; }
+      .modal-content {
+        width: 95%; /* Adjust width for very small screens */
+        padding: 20px;
+      }
+      .modal-content h2 { font-size: 1.8em; }
+      .modal-tagline { font-size: 0.95em; }
+    }
+  </style>
+</head>
+<body>
+<!-- Login Modal -->
+<div id="loginModal" class="modal-overlay">
+  <div class="modal-content">
+    <h2>Welcome to BaeMax</h2>
+    <p class="modal-tagline">
+      Watch together, chat together. <br>Your personal cinema party starts here!
+    </p>
+
+    <input id="usernameInput" class="modal-input" placeholder="Enter your username..." />
+
+    <hr class="modal-divider" />
+
+    <!-- Auto-generate room code -->
+    <button id="createRoomButton" class="modal-button">Create a New Room</button>
+    <div id="generatedRoomBox" style="display: none;">
+      <span id="generatedRoomCode"></span>
+      <button id="copyRoomButton" title="Copy code">📋</button>
+    </div>
+
+    <hr class="modal-divider" />
+
+    <!-- Join existing room -->
+    <input id="joinRoomInput" class="modal-input" placeholder="Enter room code to join..." />
+    <button id="joinRoomButton" class="modal-button">Join Room</button>
+  </div>
+</div>
+
+  <div class="video-player-container">
+    <video id="player"></video>
+    <div class="video-controls-overlay">
+      <input id="progressBar" type="range" min="0" max="100" value="0" step="0.1" />
+      <div id="timeDisplay" style="color:#eee; padding:5px 10px; font-size:0.9em; text-align:right; width:100%; font-family:monospace;">
+        00:00 / 00:00 (-00:00)
+      </div>
+      <div class="bottom-player-bar">
+        <button id="customSeekBackward" class="control-button-player" title="Back 10s">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polyline points="11 19 2 12 11 5"></polyline>
+            <polyline points="22 19 13 12 22 5"></polyline>
+          </svg>
+        </button>
+        <button id="customPlayPause" class="control-button-player" title="Play/Pause">
+          <svg id="playIcon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <svg id="pauseIcon" style="display:none;" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <rect x="5" y="4" width="4" height="16"></rect>
+            <rect x="15" y="4" width="4" height="16"></rect>
+          </svg>
+        </button>
+        <button id="customSeekForward" class="control-button-player" title="Forward 10s">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polyline points="13 5 22 12 13 19"></polyline>
+            <polyline points="2 5 11 12 2 19"></polyline>
+          </svg>
+        </button>
+        <button id="customSyncToMe" class="control-button-player" title="Sync to Me">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M21 12c0-5-4-9-9-9M3 12c0 5 4 9 9 9" />
+            <polyline points="12 1 12 5 16 1" />
+            <polyline points="12 23 12 19 8 23" />
+          </svg>
+        </button>
+        <button id="customSyncFromThem" class="control-button-player" title="Sync From Them">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <polyline points="19 12 12 19 5 12"></polyline>
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
-
+  <div class="sidebar">
+    <input id="videoInput" type="file" accept="video/*" />
+    <div id="messages"></div>
+    <div id="actionLogs"></div>
+    <div class="input-row">
+      <input id="chatInput" placeholder="Type a message..." />
+      <!-- Removed emoji button and picker container -->
+      <button class="send-button" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
   <script src="renderer.js"></script>
 </body>
 </html>
