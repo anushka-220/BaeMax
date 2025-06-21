@@ -490,7 +490,7 @@ player.addEventListener('timeupdate', () => {
 progressBar.addEventListener('input', () => {
   player.currentTime = (progressBar.value / 100) * player.duration;
   emitCommand('sync', { time: player.currentTime });
-  addMessage(`Seek to ${Math.floor(player.currentTime)}s`, username, true, "log");
+  //addMessage(`Seek to ${Math.floor(player.currentTime)}s`, username, true, "log");
 });
 playPauseButton.onclick = () => {
   if (player.paused) {
@@ -517,7 +517,7 @@ document.getElementById('customSeekForward').onclick = () => {
 };
 document.getElementById('customSyncToMe').onclick = () => {
   emitCommand('sync', { time: player.currentTime });
-  addMessage(`Syncing to my time (${Math.floor(player.currentTime)}s)`, username, true, "log");
+  addMessage(`Syncing to my time (${formatTime(player.currentTime)})`, username, true, "log");
 };
 document.getElementById('customSyncFromThem').onclick = () => {
   const timeStr = prompt('Sync to what time (s)?');
@@ -538,7 +538,7 @@ document.getElementById('videoInput').onchange = (e) => {
   const file = e.target.files[0];
   if (file) {
     player.src = URL.createObjectURL(file);
-    addMessage(`Loaded video: ${file.name}`, username, true, "log");
+    addMessage(`Loaded video`, username, true, "log");
   }
 };
 
